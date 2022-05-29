@@ -88,4 +88,3 @@ async def despausa(usuario: Usuario):
     ASTAMI.unpause_queue(usuario.usuario)
     return usuario
 
-app.run()
