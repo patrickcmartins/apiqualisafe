@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from typing import Optional
 from pydantic import BaseModel
-from pyami_asterisk import AMICLient
+from pyami_asterisk import AMIClient
 
 class Usuario(BaseModel):
     id_usuario: str
