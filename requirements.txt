@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+pyami-asterisk
+typing
+pydantic
