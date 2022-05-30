@@ -10,7 +10,7 @@ class Usuario(BaseModel):
 
 class ASTAMI():
     def callback_originate(events):
-        return events
+        print(events)
 
     ami = AMIClient(host='127.0.0.1', port=5038, username='magnus', secret='magnussolution')
 
