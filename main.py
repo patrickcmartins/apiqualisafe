@@ -27,7 +27,7 @@ class ASTAMI():
         ASTAMI.ami.connect()
 
     def unpause_queue(telefonista):
-        ASTAMI.ami.create_action(
+        resposta = ASTAMI.ami.create_action(
         {
             "Action": "QueuePause",
             "Interface": "SIP/" + telefonista,
@@ -37,9 +37,10 @@ class ASTAMI():
         ASTAMI.callback_originate,
         )
         ASTAMI.ami.connect()
+        return resposta
 
     def login(telefonista):
-        ASTAMI.ami.create_action(
+        resposta = ASTAMI.ami.create_action(
         {
             "Action": "QueueAdd",
             "Interface": "SIP/" + telefonista,
@@ -50,6 +51,7 @@ class ASTAMI():
         ASTAMI.callback_originate,
         )
         ASTAMI.ami.connect() 
+        return resposta
 
     def logout(telefonista):
         ASTAMI.ami.create_action(
