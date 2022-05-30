@@ -1,3 +1,4 @@
+from asyncio import events
 from fastapi import FastAPI
 from typing import Optional
 from pydantic import BaseModel
@@ -7,13 +8,13 @@ class Usuario(BaseModel):
     id_usuario: str
     usuario: str
     id_fila: str
-    
-class ASTAMI():    
+
+class ASTAMI():
     def callback_originate(events):
-        print(events)
-    
+        return events
+
     ami = AMIClient(host='127.0.0.1', port=5038, username='magnus', secret='magnussolution')
-        
+
     def pause_queue(telefonista):
         ASTAMI.ami.create_action(
         {
@@ -25,7 +26,7 @@ class ASTAMI():
         ASTAMI.callback_originate,
         )
         ASTAMI.ami.connect()
-        
+
     def unpause_queue(telefonista):
         ASTAMI.ami.create_action(
         {
@@ -37,7 +38,7 @@ class ASTAMI():
         ASTAMI.callback_originate,
         )
         ASTAMI.ami.connect()
-        
+
     def login(telefonista):
         ASTAMI.ami.create_action(
         {
@@ -45,12 +46,13 @@ class ASTAMI():
             "Interface": "SIP/" + telefonista,
             "Queue": "URA-BRADESCO",
             "Paused": "false",
-            
+
         },
-        ASTAMI.callback_originate,
+        events = ASTAMI.callback_originate,
         )
         ASTAMI.ami.connect()
-        
+        return events
+
     def logout(telefonista):
         ASTAMI.ami.create_action(
         {
@@ -69,22 +71,21 @@ async def root():
     return {"message": "Hello World"}
 
 @app.post("/login")
-async def login(usuario: Usuario):
+def login(usuario: Usuario):
     ASTAMI.login(usuario.usuario)
     return usuario
 
 @app.post("/logout")
-async def logout(usuario: Usuario):
+def logout(usuario: Usuario):
     ASTAMI.logout(usuario.usuario)
     return usuario
 
 @app.post("/pausa")
-async def pausa(usuario: Usuario):
+def pausa(usuario: Usuario):
     ASTAMI.pause_queue(usuario.usuario)
     return usuario
 
 @app.post("/despausa")
-async def despausa(usuario: Usuario):
+def despausa(usuario: Usuario):
     ASTAMI.unpause_queue(usuario.usuario)
     return usuario
-
