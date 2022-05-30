@@ -1,4 +1,3 @@
-from asyncio import events
 from fastapi import FastAPI
 from typing import Optional
 from pydantic import BaseModel
@@ -48,10 +47,9 @@ class ASTAMI():
             "Paused": "false",
 
         },
-        events = ASTAMI.callback_originate,
+        ASTAMI.callback_originate,
         )
-        ASTAMI.ami.connect()
-        return events
+        ASTAMI.ami.connect() 
 
     def logout(telefonista):
         ASTAMI.ami.create_action(
@@ -72,8 +70,8 @@ async def root():
 
 @app.post("/login")
 def login(usuario: Usuario):
-    ASTAMI.login(usuario.usuario)
-    return usuario
+    saida = ASTAMI.login(usuario.usuario)
+    return saida
 
 @app.post("/logout")
 def logout(usuario: Usuario):
