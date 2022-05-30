@@ -15,7 +15,7 @@ class ASTAMI():
     ami = AMIClient(host='127.0.0.1', port=5038, username='magnus', secret='magnussolution')
 
     def pause_queue(telefonista):
-        ASTAMI.ami.create_action(
+        resposta = ASTAMI.ami.create_action(
         {
             "Action": "QueuePause",
             "Interface": "SIP/" + telefonista,
@@ -25,6 +25,7 @@ class ASTAMI():
         ASTAMI.callback_originate,
         )
         ASTAMI.ami.connect()
+        return resposta
 
     def unpause_queue(telefonista):
         resposta = ASTAMI.ami.create_action(
@@ -54,7 +55,7 @@ class ASTAMI():
         return resposta
 
     def logout(telefonista):
-        ASTAMI.ami.create_action(
+        resposta = ASTAMI.ami.create_action(
         {
             "Action": "QueueRemove",
             "Interface": "SIP/" + telefonista,
@@ -63,6 +64,7 @@ class ASTAMI():
         ASTAMI.callback_originate,
         )
         ASTAMI.ami.connect()
+        return resposta
 
 app = FastAPI()
 
@@ -77,15 +79,15 @@ def login(usuario: Usuario):
 
 @app.post("/logout")
 def logout(usuario: Usuario):
-    ASTAMI.logout(usuario.usuario)
-    return usuario
+    saida = ASTAMI.logout(usuario.usuario)
+    return saida
 
 @app.post("/pausa")
 def pausa(usuario: Usuario):
-    ASTAMI.pause_queue(usuario.usuario)
-    return usuario
+    saida = ASTAMI.pause_queue(usuario.usuario)
+    return saida
 
 @app.post("/despausa")
 def despausa(usuario: Usuario):
-    ASTAMI.unpause_queue(usuario.usuario)
-    return usuario
+    saida = ASTAMI.unpause_queue(usuario.usuario)
+    return saida
