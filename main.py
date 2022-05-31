@@ -75,12 +75,12 @@ async def root():
 @app.post("/login")
 def login(usuario: Usuario):
     saida = ASTAMI.login(usuario.usuario)
-    return saida
+    return "true", 200
 
 @app.post("/logout")
 def logout(usuario: Usuario):
     saida = ASTAMI.logout(usuario.usuario)
-    return saida
+    return "true", 200
 
 @app.post("/pausa")
 def pausa(usuario: Usuario):
