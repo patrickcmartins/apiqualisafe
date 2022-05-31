@@ -85,9 +85,10 @@ def logout(usuario: Usuario):
 @app.post("/pausa")
 def pausa(usuario: Usuario):
     saida = ASTAMI.pause_queue(usuario.usuario)
-    return saida
+    return "true", 200
 
 @app.post("/despausa")
 def despausa(usuario: Usuario):
     saida = ASTAMI.unpause_queue(usuario.usuario)
-    return saida
+    return "true", 200
+    
