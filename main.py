@@ -85,11 +85,11 @@ class ASTAMI():
 
         mycursor.execute("SELECT number AS numero FROM pkg_phonenumber WHERE status = 1 LIMIT 100")
 
-        resposta = list(mycursor.fetchall())
+        resposta = mycursor.fetchall()
         
-        # final = [list(i) for i in resposta]
+        final = [list(i) for i in resposta]
         
-        return resposta
+        return final
 
 app = FastAPI()
 
