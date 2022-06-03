@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
+from fastapi.response import JSONResponse
 from typing import Optional
 from pydantic import BaseModel
 from pyami_asterisk import AMIClient
@@ -87,11 +89,6 @@ class ASTAMI():
         
         return resposta
 
-
-
-
-
-
 app = FastAPI()
 
 @app.get("/")
@@ -121,4 +118,5 @@ def despausa(usuario: Usuario):
 @app.get("/numeros")
 def numerosAtivos():
     numeros = ASTAMI.retornaNumeros()
-    return numeros, 200
+    jsonResposta = jsonable_encoder(numeros)
+    return JSONResponse(jsonResposta), 200
