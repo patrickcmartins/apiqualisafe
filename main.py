@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from typing import Optional
 from pydantic import BaseModel
 from pyami_asterisk import AMIClient
+from datetime import datetime
+import mysql.connector
+
 
 class Usuario(BaseModel):
     id_usuario: str
@@ -65,6 +68,29 @@ class ASTAMI():
         )
         ASTAMI.ami.connect()
         return resposta
+    
+    def retornaNumeros():
+        hoje = datetime.today().strftime('%Y-%m-%d')
+        
+        mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="8WrXeMbg8tUppBsd",
+        database="mbilling"
+        )
+        
+        mycursor = mydb.cursor()
+
+        mycursor.execute("SELECT number AS numero FROM pkg_phonenumber WHERE status = 1 LIMIT 100")
+
+        resposta = mycursor.fetchall()
+        
+        return resposta
+
+
+
+
+
 
 app = FastAPI()
 
@@ -91,4 +117,8 @@ def pausa(usuario: Usuario):
 def despausa(usuario: Usuario):
     saida = ASTAMI.unpause_queue(usuario.usuario)
     return "true", 200
-    
+
+@app.get("/numeros")
+def numerosAtivos():
+    numeros = ASTAMI.retornaNumeros()
+    return numeros, 200

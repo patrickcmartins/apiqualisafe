@@ -3,3 +3,4 @@ uvicorn[standard]
 pyami-asterisk
 typing
 pydantic
+mysql-connector-python
