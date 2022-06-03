@@ -119,5 +119,5 @@ def despausa(usuario: Usuario):
 def numerosAtivos():
     numeros = ASTAMI.retornaNumeros()
     jsonResposta = jsonable_encoder(numeros)
-    jsonResposta.headers["Access-Control-Allow-Origin"] = '*'
-    return JSONResponse(jsonResposta)
+    headers = {"Access-Control-Allow-Origin": '*'}
+    return JSONResponse(content=jsonResposta, headers=headers)
