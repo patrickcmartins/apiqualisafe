@@ -120,4 +120,4 @@ def numerosAtivos():
     numeros = ASTAMI.retornaNumeros()
     jsonResposta = jsonable_encoder(numeros)
     headers = {"Access-Control-Allow-Origin": '*'}
-    return JSONResponse(content=jsonResposta, headers=headers)
+    return JSONResponse(content=numeros, headers=headers)
