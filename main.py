@@ -119,4 +119,4 @@ def despausa(usuario: Usuario):
 def numerosAtivos():
     numeros = ASTAMI.retornaNumeros()
     jsonResposta = jsonable_encoder(numeros)
-    return JSONResponse(jsonResposta), 200
+    return JSONResponse(jsonResposta)
