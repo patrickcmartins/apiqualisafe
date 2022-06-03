@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
-from fastapi.response import JSONResponse
+from fastapi.responses import JSONResponse
 from typing import Optional
 from pydantic import BaseModel
 from pyami_asterisk import AMIClient
