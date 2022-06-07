@@ -83,7 +83,7 @@ class ASTAMI():
         
         mycursor = mydb.cursor()
 
-        mycursor.execute("SELECT number AS numero FROM pkg_phonenumber WHERE status = 1 LIMIT 100")
+        mycursor.execute("SELECT number AS numero, id as id_oportunidade FROM pkg_phonenumber WHERE status = 1 LIMIT 100")
 
         final = [item[0] for item in mycursor.fetchall()]
         
