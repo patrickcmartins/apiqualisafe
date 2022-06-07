@@ -120,6 +120,11 @@ def logout(usuario: Usuario):
     saida = ASTAMI.logout(usuario.usuario)
     return "true", 200
 
+@app.get("/filasum")
+def filasum():
+    saida = ASTAMI.numerosFila()
+    return saida
+
 @app.post("/pausa")
 def pausa(usuario: Usuario):
     saida = ASTAMI.pause_queue(usuario.usuario)
