@@ -96,7 +96,7 @@ class ASTAMI():
     def numerosFila():
         resposta = ASTAMI.ami.create_action(
         {
-            "Action": "QueuePause",
+            "Action": "QueueSummary",
             "Queue": "URA-BRADESCO",
         },
         ASTAMI.callback_originate,
