@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from pyami_asterisk import AMIClient
 from datetime import datetime
 import mysql.connector
+import os
 
 
 class Usuario(BaseModel):
@@ -91,6 +92,17 @@ class ASTAMI():
         final = mycursor.fetchall()
         
         return final
+    
+    def numerosFila():
+        resposta = ASTAMI.ami.create_action(
+        {
+            "Action": "QueuePause",
+            "Queue": "URA-BRADESCO",
+        },
+        ASTAMI.callback_originate,
+        )
+        ASTAMI.ami.connect()
+        return resposta
 
 app = FastAPI()
 
