@@ -85,10 +85,12 @@ class ASTAMI():
 
         mycursor.execute("SELECT number AS numero, id as id_oportunidade FROM pkg_phonenumber WHERE status = 1 LIMIT 100")
 
-        final = [item[0] for item in mycursor.fetchall()]
-        final1 = [item[1] for item in mycursor.fetchall()]
+        # final = [item[0] for item in mycursor.fetchall()] +  [item[1] for item in mycursor.fetchall()]
+        # final1 =
         
-        return final, final1
+        final = mycursor.fetchall()
+        
+        return final
 
 app = FastAPI()
 
