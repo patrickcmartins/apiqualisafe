@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from pyami_asterisk import AMIClient
 from datetime import datetime
 import mysql.connector
+import requests
+import random import randint
 import os
 
 
@@ -17,6 +19,13 @@ class Usuario(BaseModel):
 class ASTAMI():
     def callback_originate(events):
         print(events)
+        
+    mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="8WrXeMbg8tUppBsd",
+    database="mbilling"
+    )
 
     ami = AMIClient(host='127.0.0.1', port=5038, username='magnus', secret='magnussolution')
 
@@ -75,19 +84,11 @@ class ASTAMI():
     def retornaNumeros():
         hoje = datetime.today().strftime('%Y-%m-%d')
         
-        mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="8WrXeMbg8tUppBsd",
-        database="mbilling"
-        )
-        
-        mycursor = mydb.cursor()
+        mycursor = ASTAMI.mydb.cursor()
 
         mycursor.execute("SELECT number AS numero, id as id_oportunidade FROM pkg_phonenumber WHERE status = 1 LIMIT 100")
 
         # final = [item[0] for item in mycursor.fetchall()] +  [item[1] for item in mycursor.fetchall()]
-        # final1 =
         
         final = mycursor.fetchall()
         
@@ -103,6 +104,28 @@ class ASTAMI():
         )
         ASTAMI.ami.connect()
         return resposta
+    
+    def verificaWhatsapp(numero):
+        url = "https://msging.net/commands"
+
+        payload = "{\r\n \"id\": \"55"+ numero +"_" + randint(111111111111111111,999999999999999999) + "\",\r\n \"to\": \"postmaster@wa.gw.msging.net\",\r\n \"method\": \"get\",\r\n \"uri\": \"lime://wa.gw.msging.net/accounts/+" + numero + "\"\r\n}"        
+        headers = {
+        'Content-Type': 'application/json; charset=utf8',
+        'Authorization': ''
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        jsonResponse = response.json()
+
+        if(jsonResponse["status"] == "success" ):
+            
+            mycursor = ASTAMI.mydb.cursor()
+
+            mycursor.execute("INSERT INTO pkg_phonenumber (`id_phonenumber`, `number`) VALUES (2, " + numero + ") ")            
+            
+        print(jsonResponse["status"])
+        return jsonResponse["status"]
 
 app = FastAPI()
 
@@ -141,3 +164,14 @@ def numerosAtivos():
     jsonResposta = jsonable_encoder(numeros)
     headers = {"Access-Control-Allow-Origin": '*'}
     return JSONResponse(content=numeros, headers=headers)
+
+@app.get("/whatsapp/{numero}")
+def whatsappInsere(numero):
+    ASTAMI.verificaWhatsapp(numero)
+    return JSONResponse(content="bosta", status=200)
+
+# {'Response': 'Success', 'ActionID': 'action/243ccc6b-9fad-4466-ba44-61113584dc3b/1/1', 'EventList': 'start', 'Message': 'Queue status will follow'}
+# {'Event': 'QueueParams', 'Queue': 'URA-BRADESCO', 'Max': '0', 'Strategy': 'rrmemory', 'Calls': '1', 'Holdtime': '0', 'TalkTime': '39', 'Completed': '19', 'Abandoned': '0', 'ServiceLevel': '0', 'ServicelevelPerf': '15.8', 'Weight': '0', 'ActionID': 'action/243ccc6b-9fad-4466-ba44-61113584dc3b/1/1'}
+# {'Event': 'QueueMember', 'Queue': 'URA-BRADESCO', 'Name': 'SIP/telefonista10', 'Location': 'SIP/telefonista10', 'StateInterface': 'SIP/telefonista10', 'Membership': 'dynamic', 'Penalty': '0', 'CallsTaken': '0', 'LastCall': '0', 'InCall': '0', 'Status': '1', 'Paused': '1', 'PausedReason': '', 'ActionID': 'action/243ccc6b-9fad-4466-ba44-61113584dc3b/1/1'}
+# {'Event': 'QueueEntry', 'Queue': 'URA-BRADESCO', 'Position': '1', 'Channel': 'SIP/telefonista102-2-0005780d', 'Uniqueid': '1654627863.358413', 'CallerIDNum': '5543991332449', 'CallerIDName': 'unknown', 'ConnectedLineNum': 'unknown', 'ConnectedLineName': 'unknown', 'Wait': '427', 'Priority': '0', 'ActionID': 'action/243ccc6b-9fad-4466-ba44-61113584dc3b/1/1'}
+# {'Event': 'QueueStatusComplete', 'ActionID': 'action/243ccc6b-9fad-4466-ba44-61113584dc3b/1/1', 'EventList': 'Complete', 'ListItems': '3'}
