@@ -7,7 +7,7 @@ from pyami_asterisk import AMIClient
 from datetime import datetime
 import mysql.connector
 import requests
-import random import randint
+from random import randint
 import os
 
 
@@ -18,7 +18,7 @@ class Usuario(BaseModel):
 
 class ASTAMI():
     def callback_originate(events):
-        print(events)
+        return events
         
     mydb = mysql.connector.connect(
     host="localhost",
@@ -108,10 +108,10 @@ class ASTAMI():
     def verificaWhatsapp(numero):
         url = "https://msging.net/commands"
 
-        payload = "{\r\n \"id\": \"55"+ numero +"_" + randint(111111111111111111,999999999999999999) + "\",\r\n \"to\": \"postmaster@wa.gw.msging.net\",\r\n \"method\": \"get\",\r\n \"uri\": \"lime://wa.gw.msging.net/accounts/+" + numero + "\"\r\n}"        
+        payload = "{\r\n \"id\": \"55" + str(numero) + "_" + str(randint(111111111111111111,999999999999999999)) + "\",\r\n \"to\": \"postmaster@wa.gw.msging.net\",\r\n \"method\": \"get\",\r\n \"uri\": \"lime://wa.gw.msging.net/accounts/+" + str(numero) + "\"\r\n}"        
         headers = {
         'Content-Type': 'application/json; charset=utf8',
-        'Authorization': ''
+        'Authorization': '',
         }
 
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -119,11 +119,16 @@ class ASTAMI():
         jsonResponse = response.json()
 
         if(jsonResponse["status"] == "success" ):
-            
-            mycursor = ASTAMI.mydb.cursor()
 
-            mycursor.execute("INSERT INTO pkg_phonenumber (`id_phonenumber`, `number`) VALUES (2, " + numero + ") ")            
-            
+            mycursor = ASTAMI.mydb.cursor()
+            sql = "INSERT INTO pkg_phonenumber (`id_phonebook`, `number`) VALUES  (%s, %s)"
+            values = (2, numero)
+
+            mycursor.execute(sql, values)
+            ASTAMI.mydb.commit()
+
+            print(mycursor.rowcount, " registros inseridos")
+
         print(jsonResponse["status"])
         return jsonResponse["status"]
 
@@ -144,9 +149,20 @@ def logout(usuario: Usuario):
     return "true", 200
 
 @app.get("/filasum")
-def filasum():
-    saida = ASTAMI.numerosFila()
-    return saida
+def filasum(events=None):
+#    saida = ASTAMI.numerosFila()
+#    return saida
+    if(events is None):
+        resposta = ASTAMI.ami.create_action(
+        {
+         "Action": "QueueStatus",
+         "Queue": "URA-BRADESCO",
+        },
+        filasum,
+        )
+        ASTAMI.ami.connect()
+    else:
+        return events
 
 @app.post("/pausa")
 def pausa(usuario: Usuario):
@@ -166,9 +182,9 @@ def numerosAtivos():
     return JSONResponse(content=numeros, headers=headers)
 
 @app.get("/whatsapp/{numero}")
-def whatsappInsere(numero):
+async def whatsappInsere(numero):
     ASTAMI.verificaWhatsapp(numero)
-    return JSONResponse(content="bosta", status=200)
+    return JSONResponse(content="bosta")
 
 # {'Response': 'Success', 'ActionID': 'action/243ccc6b-9fad-4466-ba44-61113584dc3b/1/1', 'EventList': 'start', 'Message': 'Queue status will follow'}
 # {'Event': 'QueueParams', 'Queue': 'URA-BRADESCO', 'Max': '0', 'Strategy': 'rrmemory', 'Calls': '1', 'Holdtime': '0', 'TalkTime': '39', 'Completed': '19', 'Abandoned': '0', 'ServiceLevel': '0', 'ServicelevelPerf': '15.8', 'Weight': '0', 'ActionID': 'action/243ccc6b-9fad-4466-ba44-61113584dc3b/1/1'}
