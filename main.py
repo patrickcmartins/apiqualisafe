@@ -165,7 +165,7 @@ def filasum():
     statusFila = ASTAMI.fila()
     jsonResposta = jsonable_encoder(statusFila)
     headers = {"Access-Control-Allow-Origin": '*'}
-    return JSONResponse(content=statusFila, headers=headers)
+    return JSONResponse(content=jsonResposta, headers=headers)
 
 @app.post("/pausa")
 def pausa(usuario: Usuario):
