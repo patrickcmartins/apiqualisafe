@@ -94,6 +94,18 @@ class ASTAMI():
         
         return final
     
+    def fila():
+        hoje = datetime.today().strftime('%Y-%m-%d')
+        
+        mycursor = ASTAMI.mydb.cursor()
+
+        mycursor.execute("SELECT callerId AS numero, status, agentName AS operador, time AS darahora FROM pkg_queue_status ")
+
+        final = mycursor.fetchall()
+        
+        return final
+    
+    
     def numerosFila():
         resposta = ASTAMI.ami.create_action(
         {
@@ -149,20 +161,11 @@ def logout(usuario: Usuario):
     return "true", 200
 
 @app.get("/filasum")
-def filasum(events=None):
-#    saida = ASTAMI.numerosFila()
-#    return saida
-    if(events is None):
-        resposta = ASTAMI.ami.create_action(
-        {
-         "Action": "QueueStatus",
-         "Queue": "URA-BRADESCO",
-        },
-        filasum,
-        )
-        ASTAMI.ami.connect()
-    else:
-        return events
+def filasum():
+    statusFila = ASTAMI.fila()
+    jsonResposta = jsonable_encoder(statusFila)
+    headers = {"Access-Control-Allow-Origin": '*'}
+    return JSONResponse(content=statusFila, headers=headers)
 
 @app.post("/pausa")
 def pausa(usuario: Usuario):
