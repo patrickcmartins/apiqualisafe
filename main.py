@@ -23,7 +23,7 @@ class ASTAMI():
     mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="8WrXeMbg8tUppBsd",
+    password="",
     database="mbilling"
     )
 
