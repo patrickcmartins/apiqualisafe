@@ -27,7 +27,7 @@ class ASTAMI():
     database="mbilling"
     )
 
-    ami = AMIClient(host='127.0.0.1', port=5038, username='magnus', secret='magnussolution')
+    ami = AMIClient(host='127.0.0.1', port=5038, username='', secret='')
 
     def pause_queue(telefonista):
         resposta = ASTAMI.ami.create_action(
